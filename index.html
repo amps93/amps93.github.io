@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="추천 시스템, RAG 검색, LLM 학습·서빙을 구축하고 운영한 AI 엔지니어 강민규의 포트폴리오">
+<title>강민규 | AI 엔지니어 포트폴리오</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f4f6fa; --surface:#ffffff; --surface-2:#eef2f8;
+  --ink:#111827; --ink-2:#374151; --muted:#6b7280; --line:#d9dfe9; --line-2:#c3ccdb;
+  --accent:#1f5fd1; --accent-ink:#173f8f; --accent-soft:#e6eefc; --accent-line:#9cb8ee;
+  --warm:#b4530a; --warm-soft:#fbeee0;
+  --display:"IBM Plex Sans KR","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1218; --surface:#161b24; --surface-2:#1d2430;
+    --ink:#e9edf4; --ink-2:#c9d1dd; --muted:#8f9aac; --line:#273040; --line-2:#344055;
+    --accent:#6f9ff5; --accent-ink:#a9c4fa; --accent-soft:#182642; --accent-line:#33508a;
+    --warm:#f0a35c; --warm-soft:#3a2614;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1218; --surface:#161b24; --surface-2:#1d2430;
+  --ink:#e9edf4; --ink-2:#c9d1dd; --muted:#8f9aac; --line:#273040; --line-2:#344055;
+  --accent:#6f9ff5; --accent-ink:#a9c4fa; --accent-soft:#182642; --accent-line:#33508a;
+  --warm:#f0a35c; --warm-soft:#3a2614;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.75;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+.flow .n b{overflow-wrap:normal}
+.wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+h1,h2,h3,h4{font-family:var(--display);letter-spacing:-0.01em;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4.2vw,40px);font-weight:700;line-height:1.2}
+h2{font-size:clamp(22px,3vw,28px);font-weight:700;line-height:1.25}
+h3{font-size:19px;font-weight:700;line-height:1.35}
+h4{font-size:15px;font-weight:600;color:var(--ink-2)}
+p{margin:0}
+a{color:var(--accent-ink);text-decoration:none;border-bottom:1px solid var(--accent-line)}
+a:hover{border-bottom-color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ul{margin:0;padding-left:18px}
+li{margin:5px 0}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin-inline:-20px;padding-inline:20px}
+.nav-in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:18px;height:52px;overflow-x:auto;white-space:nowrap}
+.nav-in .brand{font-family:var(--display);font-weight:700;font-size:15px;margin-right:auto}
+.nav-in a{border:0;font-size:13.5px;color:var(--ink-2);font-weight:500}
+.nav-in a:hover{color:var(--accent-ink)}
+
+/* hero */
+.hero{padding-block:56px 40px;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:40px;align-items:stretch}
+.hero-side{display:flex;flex-direction:column}
+.hero-side .contact{flex:1;align-content:space-between}
+.hero-grid>*{min-width:0}
+.profile{display:flex;align-items:center;gap:14px;padding-bottom:14px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.avatar{flex:0 0 auto;width:88px;height:88px;border-radius:50%;overflow:hidden;background:var(--accent-soft)}
+.avatar img{display:block;width:132%;height:132%;max-width:none;margin:-9.7% 0 0 -18.8%}
+.profile .who b{display:block;font-family:var(--display);font-size:19px;font-weight:700;color:var(--ink);line-height:1.3}
+.profile .who span{display:block;font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;margin-top:2px}
+.hero .lede{margin-top:18px;font-size:16.5px;color:var(--ink-2);max-width:60ch}
+.hero .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.tag{font-family:var(--mono);font-size:12px;padding:4px 9px;border:1px solid var(--line-2);border-radius:4px;color:var(--ink-2);background:var(--surface)}
+.contact{display:grid;gap:10px;font-size:14px;padding:18px 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.contact .row{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:baseline}
+.contact .k{color:var(--muted);font-size:12.5px;font-family:var(--mono)}
+.contact .v{word-break:keep-all;overflow-wrap:anywhere}
+
+/* core capabilities */
+.capabilities{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:32px}
+.capability{padding:16px 18px;border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;background:var(--surface)}
+.capability .title{font-family:var(--display);font-size:17px;font-weight:700;color:var(--accent-ink);line-height:1.35}
+.capability .detail{font-size:13px;color:var(--ink-2);margin-top:10px;line-height:1.5}
+.capability .evidence{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+
+/* sections */
+section{padding-block:48px 8px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.sec-head .meta{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.sec-intro{color:var(--ink-2);max-width:72ch;margin:10px 0 28px}
+.company{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.company .role{font-size:13.5px;color:var(--muted)}
+.scale{list-style:none;padding:0;margin:-12px 0 28px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.scale li{margin:0;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.scale b{display:block;font-family:var(--display);font-size:16px;font-weight:700;color:var(--ink);line-height:1.3}
+.scale span{display:block;font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}
+.skill{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.skill h4{margin-bottom:8px;font-size:13.5px}
+.skill ul{padding-left:0;list-style:none;font-size:13.5px;color:var(--ink-2)}
+.skill li{margin:3px 0}
+.skill li.lead::before{content:"●";color:var(--accent);font-size:8px;margin-right:7px;vertical-align:middle}
+
+/* timeline */
+.timeline{display:grid;gap:0;margin-top:24px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.trow{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:12px 18px;border-top:1px solid var(--line);font-size:14px;align-items:baseline}
+.trow:first-child{border-top:0}
+.trow .d{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.trow.dim{color:var(--muted)}
+
+/* project */
+.project{margin-top:28px;padding-top:26px;border-top:2px solid var(--ink)}
+.project + .project{border-top:1px solid var(--line)}
+.p-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.p-head .period{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
+.chip.warm{background:var(--warm-soft);color:var(--warm)}
+.p-sum{margin-top:8px;color:var(--ink-2);max-width:78ch}
+.p-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.block h4{margin-bottom:6px}
+.block ul{font-size:14px;color:var(--ink-2)}
+.block li b{color:var(--ink);font-weight:600}
+.results{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.res{padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.res .v{font-family:var(--display);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.3}
+.res .v em{font-style:normal;color:var(--accent-ink)}
+.res .l{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.4}
+.metric-compare{width:100%;margin-top:18px;border:1px solid var(--line);border-radius:8px;border-spacing:0;overflow:hidden;background:var(--surface);font-size:13px;line-height:1.4}
+.metric-compare caption{text-align:left;font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.metric-compare th,.metric-compare td{padding:9px 12px;text-align:center;border-top:1px solid var(--line)}
+.metric-compare thead th{border-top:0;background:var(--surface-2)}
+.metric-compare th+th,.metric-compare td+td{border-left:1px solid var(--line)}
+.metric-compare tbody th{text-align:left;font-weight:600}
+.metric-compare td{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.metric-compare strong{color:var(--accent-ink)}
+.note{margin-top:12px;font-size:13px;color:var(--muted);border-left:2px solid var(--line-2);padding-left:10px}
+.learn{margin-top:14px;font-size:13.5px;color:var(--ink-2)}
+.learn b{color:var(--ink)}
+
+/* flow diagram */
+.diagram{margin-top:20px;padding:18px 18px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.diagram .cap{font-size:12.5px;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.diagram .lg{display:inline-flex;gap:14px;align-items:center}
+.diagram .lg i{display:inline-block;width:12px;height:10px;border-radius:2px;border:1.5px solid var(--line-2);background:var(--surface);vertical-align:middle;margin-right:5px}
+.diagram .lg i.me{border-color:var(--accent);background:var(--accent-soft)}
+.flow{display:flex;align-items:stretch;gap:0}
+.flow .n{flex:1 1 0;min-width:0;border:1.5px solid var(--line-2);border-radius:7px;padding:9px 11px;background:var(--surface);display:flex;flex-direction:column;justify-content:center;font-size:12.5px;line-height:1.4}
+.flow .n b{font-family:var(--display);font-size:13px;color:var(--ink);display:block;margin-bottom:2px}
+.flow .n small{color:var(--muted);font-size:11.5px;display:block}
+.flow .n.me{border-color:var(--accent);background:var(--accent-soft)}
+.flow .n.me small{color:var(--accent-ink)}
+.flow .n.db{border-radius:14px/8px;border-style:double;border-width:3px}
+.flow .n.wide{flex-grow:1.3}
+.flow .a{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:26px;color:var(--muted);font-size:16px}
+.flow .a::before{content:"→"}
+.flow .stack{flex:1.15 1 0;min-width:0;display:flex;flex-direction:column;gap:6px}
+.flow .stack .n{flex:1 1 auto}
+.flow .grp{flex:2.2 1 0;min-width:0;border:1.5px dashed var(--accent-line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px;background:transparent}
+.flow .grp .gt{font-family:var(--mono);font-size:11px;color:var(--accent-ink);letter-spacing:.04em;margin:0 2px 2px}
+.flow .grp .n{padding:6px 10px}
+.flow .grp .n b{font-size:12.5px}
+/* storage row under a flow: mirror rows reuse the same flex ratios so ticks line up with the columns above */
+.flow.tie{height:26px}
+.flow .gh{position:relative;min-width:0}
+.flow .gh-n{flex:1 1 0;padding:0 11px;border:1.5px solid transparent;border-block:0}
+.flow .gh-db{flex:1 1 0;padding:0 11px;border:3px solid transparent;border-block:0}
+.flow .gh-stack{flex:1.15 1 0}
+.flow .gh-grp{flex:2.2 1 0;padding:0 8px;border:1.5px solid transparent;border-block:0}
+.flow .gh-wide{flex:1.3 1 0;padding:0 11px;border:3px solid transparent;border-block:0}
+.flow .gh-a{flex:0 0 26px}
+.flow .tick{position:absolute;left:50%;top:0;bottom:0;border-left:1.5px dashed var(--line-2);font-style:normal}
+.flow .tick span{position:absolute;left:7px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:11px;line-height:1;color:var(--muted)}
+.flow .n.span-mid{flex:5.35 1 147px}
+.flow .n.bar{flex-direction:row;align-items:baseline;justify-content:flex-start;gap:14px;padding:10px 14px}
+.flow .n.bar b{margin:0;white-space:nowrap}
+.flow .n.bar small{display:inline}
+.callouts{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.callouts div{font-size:12.5px;color:var(--ink-2);display:flex;gap:8px}
+.callouts .num{flex:0 0 18px;height:18px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:10.5px;display:inline-flex;align-items:center;justify-content:center;margin-top:3px}
+
+/* small cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.card{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.card h4{margin-bottom:4px}
+.card .period{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:6px}
+.card p{font-size:13.5px;color:var(--ink-2)}
+
+/* footer */
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media screen and (max-width:780px){
+  .hero-grid,.p-grid,.callouts{grid-template-columns:1fr}
+  .capabilities,.skills,.cards,.results,.scale{grid-template-columns:1fr 1fr}
+  .trow{grid-template-columns:1fr;gap:2px}
+  .flow{flex-direction:column}
+  .flow .a{width:auto;height:22px}
+  .flow .a::before{content:"↓"}
+  .flow .n,.flow .stack,.flow .grp{flex:0 0 auto}
+  .flow.tie,.flow.store .gh{display:none}
+  .flow.store{margin-top:10px}
+  .flow.store .n{flex:0 0 auto}
+  .flow .n.bar{flex-direction:column;align-items:flex-start;gap:2px}
+}
+@media screen and (max-width:480px){
+  .capabilities,.skills,.cards,.results{grid-template-columns:1fr}
+  .avatar{width:64px;height:64px}
+  .metric-compare{font-size:11.5px}
+  .metric-compare th,.metric-compare td{padding:7px 5px}
+  .hero{padding-block:36px 30px}
+  .hero h1 br{display:none}
+  .nav-in{gap:14px}
+  .contact .row{grid-template-columns:56px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+
+/* print: keep the screen design and paginate at screen width with A4 proportions */
+@page{
+  size:1100px 1556px;
+  margin:48px 0 60px;
+  background:#f4f6fa;
+  @bottom-left{content:"강민규 · AI 엔지니어 포트폴리오";font-family:"Noto Sans KR","Malgun Gothic",sans-serif;font-size:12px;color:#8a919c;padding-left:80px}
+  @bottom-right{content:counter(page) " / " counter(pages);font-family:"IBM Plex Mono",Consolas,monospace;font-size:12px;color:#8a919c;padding-right:80px}
+}
+@media print{
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    color-scheme:light;
+    --bg:#f4f6fa; --surface:#ffffff; --surface-2:#eef2f8;
+    --ink:#111827; --ink-2:#374151; --muted:#6b7280; --line:#d9dfe9; --line-2:#c3ccdb;
+    --accent:#1f5fd1; --accent-ink:#173f8f; --accent-soft:#e6eefc; --accent-line:#9cb8ee;
+    --warm:#b4530a; --warm-soft:#fbeee0;
+  }
+  html,body{background:#f4f6fa}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html{scroll-behavior:auto}
+  .nav{display:none}
+  .wrap{padding-block:0}
+  .hero{padding-block:0 28px}
+  .hero .lede{margin-top:14px}
+  .hero .tags{margin-top:16px}
+  .capabilities{margin-top:24px}
+  .skills{margin-top:16px}
+  .timeline{margin-top:16px}
+  .trow{padding-block:9px}
+  .sec-intro{margin-bottom:20px;max-width:none}
+  .p-sum{max-width:none}
+  .scale{margin:-8px 0 20px;break-inside:avoid}
+  .project{margin-top:24px;padding-top:22px}
+  .p-grid,.results{margin-top:14px}
+  .print-break{break-before:page;border-top:0!important;margin-top:0!important;padding-top:0!important}
+  section{padding-block:0;break-before:page}
+  .sec-head,.p-head{break-after:avoid}
+  .capability,.skill,.timeline,.diagram,.p-grid,.results,.res,.card,.metric-compare,.note,.learn{break-inside:avoid}
+  .p-sum{orphans:3;widows:3}
+  a{border-bottom:0}
+  footer{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="nav" aria-label="섹션 이동"><div class="nav-in">
+  <span class="brand">강민규 · AI Engineer</span>
+  <a href="#about">기본 정보</a>
+  <a href="#bigbenett">빅베넷</a>
+  <a href="#notiplus">노티플러스</a>
+</div></nav>
+
+<!-- ============ 기본 정보 ============ -->
+<header class="hero" id="about">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">AI Engineer · Portfolio</div>
+      <h1 style="margin-top:10px">추천·검색·LLM을<br>실제 서비스로 연결하는<br>AI 엔지니어 강민규입니다.</h1>
+      <p class="lede">뉴스 서비스에서 추천·분류 모델을 학습하고 배치 서비스에 적용해 지표를 개선했습니다. 공공 정보포털에서는 분류·LLM 모델을 학습·서빙하고 문서 처리와 RAG 검색 기능에 연결하고 있습니다. 데이터 구축부터 모델 평가, API 배포와 운영까지 수행해 온 AI 엔지니어입니다.</p>
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">PyTorch</span><span class="tag">FastAPI</span><span class="tag">Elasticsearch</span><span class="tag">Kafka</span><span class="tag">Airflow</span><span class="tag">vLLM</span><span class="tag">Unsloth</span><span class="tag">LLM</span><span class="tag">LoRA</span><span class="tag">Kubernetes</span>
+      </div>
+    </div>
+    <div class="hero-side">
+      <aside class="contact" aria-label="연락처와 링크">
+        <div class="profile">
+          <span class="avatar"><img src="memoji.png" alt="강민규 미모티콘" width="421" height="421"></span>
+          <div class="who"><b>강민규</b><span>AI ENGINEER</span></div>
+        </div>
+        <div class="row"><span class="k">EMAIL</span><span class="v"><a href="mailto:clover4202@naver.com">clover4202@naver.com</a></span></div>
+        <div class="row"><span class="k">GITHUB</span><span class="v"><a href="https://github.com/amps93">github.com/amps93</a></span></div>
+        <div class="row"><span class="k">주소</span><span class="v">서울시 강서구</span></div>
+        <div class="row"><span class="k">학력</span><span class="v">경기대학교 응용정보통계학과 (2012.03 – 2018.08)</span></div>
+        <div class="row"><span class="k">자격</span><span class="v">빅데이터분석기사 (2022) · ADsP (2019) · 사회조사분석사 2급 (2017)</span></div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="capabilities" aria-label="핵심 역량">
+    <div class="capability"><div class="title">추천·분류 모델 운영</div><div class="detail">개인화 추천과 연관기사 추천, 뉴스 카테고리·선정성 텍스트 분류를 서비스에 적용</div><div class="evidence">파트너스 추천 클릭 +163.5% · 카테고리 대분류 정확도 0.965</div></div>
+    <div class="capability"><div class="title">문서 처리 파이프라인</div><div class="detail">수집부터 문서 처리·색인까지 연결하고 실패·재처리 경로를 설계</div><div class="evidence">Kafka 수동 commit · DLQ · 단계별 Parquet 스냅샷</div></div>
+    <div class="capability"><div class="title">검색 품질 설계</div><div class="detail">키워드·벡터 검색을 결합하고 후보 선별, 순위 병합, 품질 감사를 구현</div><div class="evidence">BM25 + kNN · RRF 순위 병합 · 한영 문서 검색 지원</div></div>
+    <div class="capability"><div class="title">모델 파인튜닝</div><div class="detail">KoBERT·KcELECTRA 분류 모델과 Qwen3-4B LoRA를 학습해 서비스 파이프라인에 적용</div><div class="evidence">색인 전 불필요한 청크 판별 · 선정성 재현율 0.98</div></div>
+  </div>
+
+  <div class="skills" aria-label="기술 스택">
+    <div class="skill"><h4>LLM · RAG</h4><ul>
+      <li class="lead">RAG 파이프라인 설계 (파싱·청킹·임베딩·색인·생성)</li>
+      <li class="lead">Elasticsearch 하이브리드 검색 (BM25 + kNN, RRF)</li>
+      <li class="lead">BGE-M3 임베딩 · Gemini/GPT API 연동 · 구조화 출력 설계</li></ul></div>
+    <div class="skill"><h4>LLM 학습 · 서빙</h4><ul>
+      <li class="lead">Unsloth LoRA SFT, LLM 라벨링 기반 데이터 구축</li>
+      <li class="lead">4비트 로드 추론 API, 배치 생성·출력 정규화</li>
+      <li class="lead">vLLM 서빙 (Qwen, Gemma, GPT-OSS 등)</li>
+      <li class="lead">AWQ · GGUF 양자화 실험</li>
+      <li class="lead">Qwen3-TTS 보이스 파인튜닝</li></ul></div>
+    <div class="skill"><h4>NLP · ML</h4><ul>
+      <li class="lead">KoBERT · KcELECTRA 분류 모델 파인튜닝</li>
+      <li class="lead">kiwipiepy · Mecab · TF-IDF · Word2Vec/Item2Vec</li>
+      <li class="lead">UMAP · KMeans/HDBSCAN 군집 분석</li>
+      <li class="lead">InsightFace 얼굴 인식</li></ul></div>
+    <div class="skill"><h4>추천 시스템</h4><ul>
+      <li class="lead">파트너스 개인화 추천 (SVD 기반 UBCF·IBCF·콘텐츠 기반)</li>
+      <li class="lead">Item2Vec 클릭 시퀀스 학습·연관기사 추천</li>
+      <li class="lead">암묵 피드백 점수화·적용 전후 지표 분석</li></ul></div>
+    <div class="skill"><h4>데이터 파이프라인</h4><ul>
+      <li class="lead">북한정보포털: NiFi·Airflow 수집 연계 → Kafka → Python consumer → ES 색인</li>
+      <li class="lead">파싱·OCR·청킹·요약·임베딩·NER을 독립 FastAPI 서비스로 운영</li>
+      <li class="lead">수동 commit·DLQ 재처리·단계별 Parquet 스냅샷으로 실패 복구</li></ul></div>
+    <div class="skill"><h4>인프라</h4><ul>
+      <li class="lead">Kubernetes 기반 사내 AI 플랫폼에 서비스 배포·운영</li>
+      <li class="lead">A100 GPU 4장을 MIG 슬라이스로 분할해 모델별 GPU 메모리 배분</li>
+      <li class="lead">AWS 및 RunPod Pods·Serverless 활용</li></ul></div>
+  </div>
+
+  <div class="timeline" aria-label="경력">
+    <div class="trow"><span class="d">2025.01 – 현재</span><span><b>빅베넷</b> · AI Division 매니저 — 분류·LLM 모델 학습·서빙, RAG 기반 AI 기능 개발</span></div>
+    <div class="trow"><span class="d">2022.04 – 2024.05</span><span><b>노티플러스</b> · 추천개발팀 연구원/매니저 — 뉴스 카테고리·선정성 분류, Item2Vec 연관기사, 파트너스 개인화 추천</span></div>
+    <div class="trow dim"><span class="d">2021.02 – 2021.05</span><span><b>여보야</b> · 기획팀 사원 — 서비스 기획·운영</span></div>
+    <div class="trow dim"><span class="d">2020.02 – 2020.12</span><span><b>한국문화진흥</b> · 플랫폼운영팀 사원 — 서비스 기획·운영</span></div>
+  </div>
+</header>
+
+<!-- ============ 빅베넷 ============ -->
+<section id="bigbenett">
+  <div class="sec-head">
+    <div class="company"><h2>빅베넷</h2><span class="role">AI Division · 매니저</span></div>
+    <span class="meta">2025.01 – 현재</span>
+  </div>
+  <p class="sec-intro">공공 정보포털 두 곳에서 AI 모델 개발부터 추론 환경 구축, 서비스 적용까지 맡고 있습니다. LLM을 파인튜닝하고 vLLM 기반 서빙 환경을 구성했으며, 문서 분석·번역·음성 합성·얼굴 인식 기능을 개발했습니다. RAG 검색과 문서 처리 파이프라인도 구축해 AI 기능을 포털 서비스에 연결했습니다.</p>
+  <ul class="scale" aria-label="빅베넷 핵심 업무">
+    <li><b>LLM 학습</b><span>색인용 청크 분류 모델 LoRA 파인튜닝</span></li>
+    <li><b>모델 서빙</b><span>vLLM 기반 번역·OCR 서빙, 분류 추론 API</span></li>
+    <li><b>AI 기능 개발</b><span>동향 분석·리포트·얼굴 인식·음성 합성</span></li>
+    <li><b>RAG 서비스 적용</b><span>문서 처리·하이브리드 검색·AI 요약 연계</span></li>
+  </ul>
+
+  <!-- 프로젝트 1 -->
+  <article class="project" style="border-top:0;padding-top:0;margin-top:0">
+    <div class="p-head"><h3>북한정보포털 AI 문서 처리·RAG 서비스 구축</h3><span class="period">2025.01 – 현재</span><span class="chip">RAG · 서비스</span></div>
+    <p class="p-sum">동향·이해 자료, 발간물, 외부 수집 문서를 실시간·배치로 받아 파싱·청킹·요약·임베딩·개체명 추출까지 거쳐 Elasticsearch에 색인하고, 그 위에서 8개 검색 세트를 대상으로 하이브리드 검색과 AI 요약을 제공합니다. Kafka consumer와 단계별 NLP 서비스, ES 색인·검색 결과 병합 로직을 개발하고 DLQ·재처리 경로를 마련했습니다. 외부 수집 자료는 텍스트 47.6만 건과 첨부파일 1.4만 건을 초기 적재했습니다.</p>
+    <div class="diagram">
+      <div class="cap"><span>수집 → Kafka → Consumer → 서비스 체인 → 색인 · 파일과 중간 결과는 HDFS에 저장</span><span class="lg"><i class="me"></i>직접 설계·개발 <i></i>기존 인프라·연계</span></div>
+      <div class="flow">
+        <div class="n db"><b>원천 DB</b><small>문서 메타·본문<br>PDF·HWP 첨부</small></div>
+        <div class="a"></div>
+        <div class="stack">
+          <div class="n"><b>NiFi</b><small>실시간 수집, 변경 감지</small></div>
+          <div class="n"><b>Airflow</b><small>배치 수집, DLQ 재처리</small></div>
+        </div>
+        <div class="a"></div>
+        <div class="n"><b>Kafka</b><small>문서 이벤트 토픽<br>DLQ 토픽 분리</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>Python Consumer</b><small>문서 이벤트 처리<br>처리 상태 기록·실패 재처리</small></div>
+        <div class="a"></div>
+        <div class="grp"><div class="gt">FASTAPI 서비스 체인 (K8s)</div>
+          <div class="n me"><b>파일→텍스트 · OCR</b><small>pdfplumber, PaddleOCR-VL + vLLM</small></div>
+          <div class="n me"><b>정제 · 문장분리 · 청킹</b><small>KSSDS, 250자/최소 80자 병합</small></div>
+          <div class="n me"><b>본문 판별 · 요약 · 키워드</b><small>Qwen3-4B LoRA, LLM 게이트웨이</small></div>
+          <div class="n me"><b>형태소 · 임베딩 · NER</b><small>Kiwi 사용자사전, BGE-M3, NER</small></div>
+        </div>
+        <div class="a"></div>
+        <div class="n db me wide"><b>Elasticsearch</b><small>문서 인덱스 + 청크 인덱스<br>BM25 필드 + dense_vector</small></div>
+      </div>
+      <div class="flow tie" aria-hidden="true">
+        <div class="gh gh-db"></div><div class="gh gh-a"></div>
+        <div class="gh gh-stack"><i class="tick"><span>↓ 원본 파일 적재</span></i></div><div class="gh gh-a"></div>
+        <div class="gh gh-n"></div><div class="gh gh-a"></div>
+        <div class="gh gh-n"><i class="tick"><span>↓ 단계별 Parquet</span></i></div><div class="gh gh-a"></div>
+        <div class="gh gh-grp"><i class="tick"><span>↑ 원본 파일 읽기</span></i></div><div class="gh gh-a"></div>
+        <div class="gh gh-wide"></div>
+      </div>
+      <div class="flow store">
+        <div class="gh gh-db"></div><div class="gh gh-a"></div>
+        <div class="n db bar span-mid"><b>HDFS · 공통 저장 계층</b><small>원본 PDF·HWP 보관 · 처리 단계별 Parquet 스냅샷</small></div>
+        <div class="gh gh-a"></div><div class="gh gh-wide"></div>
+      </div>
+      <div class="callouts">
+        <div><span class="num">1</span><span>실시간(NiFi)과 배치(Airflow)를 이원화해 신규 문서는 즉시 반영하고 누락·재처리는 배치가 맡습니다.</span></div>
+        <div><span class="num">2</span><span>Kafka로 문서 수집과 처리를 분리해 OCR·LLM 처리가 오래 걸려도 수집을 계속할 수 있게 했습니다. 완료되지 않은 작업은 다시 처리하고, 실패한 작업은 원인과 함께 별도로 보관합니다.</span></div>
+        <div><span class="num">3</span><span>각 단계를 독립 서비스로 두어 Consumer와 별개로 스케일하고, GPU 모델 인스턴스를 여러 파이프라인이 공유합니다.</span></div>
+        <div><span class="num">4</span><span>검색을 위해 문서 단위와 청크 단위로 색인을 분리했습니다. document_index에는 문서 요약과 메타데이터를, segment_index에는 본문 청크를 저장해 문서의 전체 내용과 세부 내용을 각각 검색할 수 있도록 했습니다.</span></div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="block"><h4>AI 문서 처리 설계</h4><ul>
+        <li>PDF·HWP의 텍스트 추출 경로를 구성하고, 이미지 기반 문서는 PaddleOCR-VL로 변환</li>
+        <li>문장·문단 경계를 반영해 청킹하고 짧은 청크를 병합해 모델과 검색에 사용할 입력 단위를 구성</li>
+        <li>요약·키워드 생성 시 인물·기관·정책·사건명을 유지하도록 프롬프트를 설계</li>
+        <li>BGE-M3 임베딩과 개체명 추출 결과를 문서·청크 색인 단계에 연결</li>
+        <li>OCR·LLM·임베딩 서비스를 분리해 모델별 실행 환경과 확장 단위를 관리</li></ul></div>
+      <div class="block"><h4>부가 모델</h4><ul>
+        <li><b>검색어 비속어 필터</b>: 검색 로그 11.7만 건에서 고유 검색어 5,535개를 뽑고 비속어 사전 단어를 더한 3.7만 건을 LLM으로 라벨링. 학습 29,612 / 테스트 7,404건으로 규칙 필터 → KoBERT 하이브리드를 만들고, 8.9:1 불균형이라 소수 클래스 F1 기준으로 선택 (F1 0.89)</li>
+        <li><b>청크 본문 판별</b>: Qwen3-4B LoRA 분류 모델로 색인 전에 목차·판권 등 비본문 청크를 제외</li></ul></div>
+    </div>
+  </article>
+
+  <!-- 프로젝트 2 -->
+  <article class="project print-break">
+    <div class="p-head"><h3>DMZ 포털 통합검색과 CMS 연동 색인 파이프라인</h3><span class="period">2025 – 현재</span><span class="chip">검색 · 파이프라인</span></div>
+    <p class="p-sum">CMS 변경 이벤트와 S3 첨부파일을 파싱·번역·임베딩해 색인하는 파이프라인 서버와 한영 통합검색·평화지도 검색 API를 설계했습니다. SQLite로 처리할 작업을 관리하고, 첨부파일은 별도 워커에서 처리하도록 구성했습니다. 중복 처리를 방지하고 실패한 작업을 재시도하는 기능과 검색 설정·결과 검증 도구를 구현했습니다.</p>
+    <div class="diagram">
+      <div class="cap"><span>색인 파이프라인</span></div>
+      <div class="flow">
+        <div class="n"><b>CMS 변경 이벤트</b><small>create / update / delete<br>10개 source, 전체 payload</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>접수 API</b><small>요청 확인 후 접수 결과 응답<br>중복 요청·이전 버전 반영 방지<br>SQLite에 처리할 작업 저장</small></div>
+        <div class="a"></div>
+        <div class="stack">
+          <div class="n me"><b>general 워커 5</b><small>본문·메타, 삭제</small></div>
+          <div class="n me"><b>attachment 워커 3</b><small>PDF·HWP 첨부 전용 lane</small></div>
+        </div>
+        <div class="a"></div>
+        <div class="grp"><div class="gt">S3 첨부 처리</div>
+          <div class="n me"><b>파싱 · OCR</b><small>HWPX &gt; PDF &gt; HWP, PaddleOCR-VL 180 DPI, 원문 선저장</small></div>
+          <div class="n me"><b>정제 · 청킹</b><small>Gemini 노이즈 제거, 500자 / 최소 100자, 섹션 보존</small></div>
+          <div class="n me"><b>번역 · 임베딩</b><small>청크 단위 번역 + 검색가치 판정, SHA-256 임베딩 캐시</small></div>
+        </div>
+        <div class="a"></div>
+        <div class="n db me wide"><b>Elasticsearch</b><small>부모 문서 + 청크<br>백업 후 교체, 실패 시 복구</small></div>
+      </div>
+      <div class="callouts">
+        <div><span class="num">1</span><span>긴 PDF OCR이 워커를 전부 점유해 첨부 없는 데이터까지 기다리던 문제를 lane 분리로 해결했습니다.</span></div>
+        <div><span class="num">2</span><span>워커는 lease 토큰과 30초 heartbeat로 소유권을 관리하고, 종료 신호에 작업을 즉시 pending으로 반환합니다.</span></div>
+        <div><span class="num">3</span><span>실패를 success / partial / skipped / failed로 나눠 손상 파일은 재시도하지 않고, 외부 서비스 장애만 15분 주기로 재시도합니다.</span></div>
+        <div><span class="num">4</span><span>파서·프롬프트·모델·차원을 해시한 인덱스 버전이 바뀌면 자동 전체 재색인됩니다.</span></div>
+      </div>
+    </div>
+    <div class="diagram">
+      <div class="cap"><span>검색 요청 흐름</span></div>
+      <div class="flow">
+        <div class="n"><b>검색 요청</b><small>SSE 스트림</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>질의 분석</b><small>NFKC 정규화, 약어·동의어 확장<br>의도 7종, 부정 조건, 카테고리 제어어</small></div>
+        <div class="a"></div>
+        <div class="stack">
+          <div class="n me"><b>BM25</b><small>필드별 boost, exact/phrase</small></div>
+          <div class="n me"><b>kNN (bbq_hnsw)</b><small>k 300, 후보 500, cos ≥ 0.72</small></div>
+        </div>
+        <div class="a"></div>
+        <div class="n me"><b>가중 RRF</b><small>의도별 키워드/벡터 가중치<br>카테고리 soft boost, entity 재랭킹</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>결과 + AI 요약</b><small>선택 후보만 mget 하이드레이션<br>Gemini 스트리밍 요약</small></div>
+      </div>
+      <div class="callouts">
+        <div><span class="num">1</span><span>검색·요약·임베딩을 별도 executor로 격리해 임베딩 큐 포화 시 해당 요청만 키워드 검색으로 강등합니다.</span></div>
+        <div><span class="num">2</span><span>같은 검색 요청이 동시에 들어오면 한 번만 처리하고 결과를 공유, 60초 결과 캐시, 시작 시 임베딩 워밍업.</span></div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="block"><h4>검색·번역 설계</h4><ul>
+        <li><b>한영 문서 대응</b>: 한글 본문을 청크로 나눈 뒤 각 청크를 번역해 한영 내용을 연결. 법령·소개 페이지는 조문·문단 구조를 기준으로 한영 내용을 맞춰 청킹</li>
+        <li><b>검색 순위 통합</b>: 키워드 검색과 벡터 검색의 결과를 RRF로 통합하고, 관련 카테고리의 문서는 제외 여부 대신 순위 가중치로 반영</li>
+        <li><b>검색 설정 관리</b>: 가중치·동의어·카테고리 우선순위를 JSON 설정 파일에서 조정</li></ul></div>
+      <div class="block"><h4>품질 검증</h4><ul>
+        <li>파이프라인 169개, 검색 API 148개 단위 테스트로 단계별 입출력과 API 응답을 점검</li>
+        <li>실제 ES 대상 감사 스크립트로 검색 품질 하한 점검: nDCG@10 0.75, MRR@10 0.8, recall@100 0.9 이상</li>
+        <li>"접경 / 접경? / 접경이란?" 같은 동치 질의 그룹의 결과 일치 검사, 유니코드·오타 견고성 감사, 부하 테스트</li>
+        </ul></div>
+    </div>
+  </article>
+
+  <!-- 프로젝트 3 -->
+  <article class="project print-break">
+    <div class="p-head"><h3>LLM 파인튜닝·모델 성능 비교</h3><span class="period">2026</span><span class="chip">LLM · 학습</span></div>
+    <p class="p-sum">RAG 색인에 쓸 청크와 목차·판권 같은 비본문 청크를 구분하는 과제로 Llama-3.2-3B와 Qwen3-4B를 LoRA 파인튜닝했습니다. 라벨 데이터와 평가 프롬프트를 정리해 두 모델의 학습 전후 성능을 비교하고, Qwen 모델은 병합·4비트 추론 API로 색인 단계에 적용했습니다.</p>
+    <div class="diagram">
+      <div class="cap"><span>라벨 데이터 → Llama·Qwen 파인튜닝 → 학습 전후 비교 → 모델 적용</span></div>
+      <div class="flow">
+        <div class="n db"><b>색인 후보 청크</b><small>문서 본문·목차·잡문<br>Elasticsearch 추출</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>라벨 데이터</b><small>지식 가치 기준 True/False<br>학습·검증 분리</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>Unsloth LoRA SFT</b><small>Llama-3.2-3B<br>Qwen3-4B</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>성능 비교</b><small>학습 전후 정확도·F1<br>혼동 행렬 확인</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>Qwen 모델 서빙</b><small>가중치 병합·4비트 로드<br>True/False 반환</small></div>
+        <div class="a"></div>
+        <div class="n db me"><b>RAG 색인</b><small>True 청크만 다음 단계로<br>요약·임베딩·색인</small></div>
+      </div>
+      <div class="callouts">
+        <div><span class="num">1</span><span>목차라는 형식만 보지 않고, 사용자의 질문에 답하는 데 필요한 지식적 가치가 있는지를 판별 기준으로 삼았습니다.</span></div>
+        <div><span class="num">2</span><span>두 모델에 같은 지시문과 응답 형식을 적용하고, 동일한 평가 데이터로 학습 전후 결과를 비교했습니다.</span></div>
+        <div><span class="num">3</span><span>서비스에 적용한 Qwen 모델은 병합 후 4비트로 로드하고, 요청을 8건씩 처리해 GPU 메모리 사용을 제한합니다.</span></div>
+        <div><span class="num">4</span><span>출력을 True/False 문자열로 정규화해 파이프라인의 청크 필터 단계에서 바로 사용합니다.</span></div>
+      </div>
+    </div>
+    <div class="p-grid">
+      <div class="block"><h4>학습·평가 설계</h4><ul>
+        <li>색인 후보 청크에 지식 가치 기준 True/False 라벨을 정리하고 학습·평가 데이터를 분리</li>
+        <li>Llama-3.2-3B와 Qwen3-4B를 Unsloth LoRA SFT로 파인튜닝</li>
+        <li>같은 프롬프트와 평가셋으로 기본 모델·학습 모델의 정확도·F1·혼동 행렬을 비교</li></ul></div>
+      <div class="block"><h4>모델 서빙과 서비스 적용</h4><ul>
+        <li>서비스에 적용한 Qwen의 학습 가중치를 16비트 병합 모델로 저장하고 FastAPI 시작 시 4비트로 로드</li>
+        <li>텍스트 목록을 8건씩 처리, 최대 5토큰 생성 후 True/False 결과 목록 반환</li>
+        <li>파싱·청킹 뒤, 요약·임베딩·색인 전에 불필요한 청크를 걸러 검색 대상 품질을 관리</li></ul></div>
+    </div>
+    <table class="metric-compare">
+      <caption>학습 전후 분류 성능 비교</caption>
+      <thead><tr><th scope="col">지표</th><th scope="col">Llama-3.2-3B</th><th scope="col">Qwen3-4B</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">정확도</th><td>0.544 → <strong>0.985</strong></td><td>0.576 → <strong>0.984</strong></td></tr>
+        <tr><th scope="row">정밀도</th><td>0.946 → <strong>0.995</strong></td><td>0.943 → <strong>0.988</strong></td></tr>
+        <tr><th scope="row">재현율</th><td>0.504 → <strong>0.987</strong></td><td>0.545 → <strong>0.994</strong></td></tr>
+        <tr><th scope="row">F1</th><td>0.658 → <strong>0.991</strong></td><td>0.691 → <strong>0.991</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="note">동일한 1,563건 평가셋에서 비교한 결과입니다. 정밀도·재현율·F1은 본문(True) 기준입니다. 본문을 잘못 제외한 건수는 Llama 673→17건, Qwen 617→8건이고, 잡문을 본문으로 잘못 남긴 건수는 각각 39→7건, 45→17건입니다. 색인 단계에서 본문을 놓치면 검색으로 되찾을 수 없어서, 본문을 잘못 제외한 건수가 가장 적은 Qwen 모델을 실제 색인 파이프라인에 연결했습니다.</p>
+  </article>
+
+  <!-- 프로젝트 4 -->
+  <article class="project">
+    <div class="p-head"><h3>포털 AI 기능 개발</h3><span class="period">2025 – 현재</span><span class="chip">분석 · 비전 · 음성</span></div>
+    <p class="p-sum">검색·색인 외에도 월간 동향 AI 리포트, 얼굴 인식, 다국어 번역, 음성 합성 기능을 개발했습니다. 문서 임베딩·군집화와 LLM 요약, 번역·TTS 서빙, 한국어 보이스 파인튜닝을 서비스에 연결했습니다.</p>
+    <div class="p-grid">
+      <div class="block"><h4>문서 · 이미지</h4><ul>
+        <li>문서 임베딩과 UMAP·KMeans로 월간 동향을 군집화하고 TF-IDF 키워드·대표 문서를 추출</li>
+        <li>군집별 대표 문서를 바탕으로 LLM 요약 리포트를 생성하고 월별 결과를 색인·조회</li>
+        <li>InsightFace 기반 얼굴 등록·삭제·분석 API 구현, 등록 인물 592명</li></ul></div>
+      <div class="block"><h4>번역 · 음성</h4><ul>
+        <li>HY-MT 기반 vLLM 번역 API 구현</li>
+        <li>문장 분리 후 WAV를 스트리밍하는 Supertonic TTS API 구현</li>
+        <li>Qwen3-TTS 한국어 보이스 파인튜닝: 음성 12,854개 중 5~10초 구간 1,219개를 골라 학습하고 체크포인트별 청취 비교</li></ul></div>
+    </div>
+  </article>
+</section>
+
+<!-- ============ 노티플러스 ============ -->
+<section id="notiplus">
+  <div class="sec-head">
+    <div class="company"><h2>노티플러스</h2><span class="role">추천개발팀 · 연구원/매니저</span></div>
+    <span class="meta">2022.04 – 2024.05 · 2년 2개월</span>
+  </div>
+  <p class="sec-intro">뉴스 큐레이션 서비스 ‘뉴스픽’에서 분류 모델과 추천 기능을 개발·운영했습니다. 뉴스 카테고리와 선정성 텍스트를 분류하는 모델을 서비스에 적용하고, Item2Vec 기반 연관기사 추천과 파트너스 메인 개인화 추천을 구현했습니다.</p>
+  <ul class="scale" aria-label="노티플러스 핵심 업무">
+    <li><b>개인화 추천</b><span>행동 로그 기반 협업·콘텐츠 추천 결합</span></li>
+    <li><b>연관기사 추천</b><span>클릭 시퀀스 Item2Vec 학습·배치 적용</span></li>
+    <li><b>뉴스 카테고리 분류</b><span>KoBERT 계층 분류·라벨 정제·모니터링</span></li>
+    <li><b>선정성 텍스트 분류</b><span>KcELECTRA 학습·운영 콘텐츠 점수화</span></li>
+  </ul>
+
+  <!-- 프로젝트 1 -->
+  <article class="project" style="border-top:0;padding-top:0;margin-top:0">
+    <div class="p-head"><h3>파트너스 메인 페이지 개인화 추천</h3><span class="period">2022.07 – 2022.09 · 고도화 2023.11</span><span class="chip">추천</span></div>
+    <p class="p-sum">퍼블리셔가 공유할 기사를 고르는 파트너스 메인 페이지는 모든 사용자에게 같은 목록을 보여주고 있었고, 클릭률과 공유가 다른 채널보다 낮았습니다. 사용자 행동 로그의 암묵 피드백을 점수화하고 협업·콘텐츠 기반 후보와 노출 순서 결정 로직을 구현해 개인화 추천을 적용했습니다. 적용 전후 지표도 분석했습니다.</p>
+    <div class="p-grid">
+      <div class="block"><h4>문제와 제약</h4><ul>
+        <li>명시적 평점이 없고 공유·클릭·노출만 있는 <b>암묵 피드백</b> 데이터</li>
+        <li>활동 퍼블리셔 약 5천 명, 기사 수명이 짧아 사용자·아이템 행렬이 매우 희소</li>
+        <li>매시 추천 결과를 갱신해야 하는 배치 제약</li></ul></div>
+      <div class="block"><h4>설계 결정</h4><ul>
+        <li><b>행동 신호를 0~5점 implicit rating으로 규칙화</b>: 공유 +4, 클릭 +3, 카테고리 반복 공유·클릭 가산, 노출만 있으면 감점</li>
+        <li>12종 알고리즘 조합: SVD 기반 UBCF(n_factors 36), 코사인 IBCF, TF-IDF 콘텐츠 기반, 선호 카테고리 3관점(최근·최다·가중), 실시간 이슈</li>
+        <li>상위 0.1% 이상치 사용자와 상호작용 20건 이하 제외, 최종 풀에서 성인 카테고리 제거</li>
+        <li>알고리즘별 효율(공유+클릭/노출) 순서에 1.0, 0.95, 0.90… 가중치를 주고 <b>가중 비복원 추첨</b>으로 노출 순서 결정</li></ul></div>
+    </div>
+    <div class="results">
+      <div class="res"><div class="v"><em>+163.5%</em></div><div class="l">메인 추천 블록 클릭 수 (8,112 → 21,377)</div></div>
+      <div class="res"><div class="v"><em>+38.9%</em></div><div class="l">공유 수 (4,630 → 6,429)</div></div>
+      <div class="res"><div class="v">6.84% <span class="muted" style="font-size:13px">vs 4.76%</span></div><div class="l">메인 추천 영역 클릭률 vs 메인 외 영역</div></div>
+    </div>
+    <p class="note">2022년 8월 운영 적용 전후 각 7일의 메인 추천 블록 지표입니다. A/B 테스트 결과는 아니므로 서비스 전체의 개선으로 해석하지 않았습니다.</p>
+  </article>
+
+  <!-- 프로젝트 2 -->
+  <article class="project">
+    <div class="p-head"><h3>Item2Vec 연관기사 추천</h3><span class="period">2022.12 – 2023.01 · 평가 2023.11</span><span class="chip">추천</span></div>
+    <p class="p-sum">기존 연관기사 알고리즘(TF-IDF·연관규칙)과 겹치지 않는 신호를 얻기 위해, 기사 텍스트 대신 클릭 순서 자체를 학습하는 Item2Vec 추천을 설계·구현했습니다. 로그 종류와 파라미터를 실험으로 정하고, 30분 배치에 학습·추론을 넣어 운영했습니다.</p>
+    <div class="p-grid">
+      <div class="block"><h4>문제와 제약</h4><ul>
+        <li>사용자 로그에 세션 구분이 없어 "함께 읽힌 기사"의 경계를 직접 정의해야 함</li>
+        <li>기사 수명이 하루 안팎이라 매 배치마다 새로 학습하고 30분 안에 결과를 내야 함</li></ul></div>
+      <div class="block"><h4>설계 결정</h4><ul>
+        <li><b>로그 종류</b>: 방문·클릭·파트너스 로그로 각각 추천풀을 만들어 검수. 클릭 로그가 방문 로그와 정분류율이 비슷하면서(25.6% vs 28.9%) 2.5배 빨라 채택</li>
+        <li><b>세션 경계 41초</b>: 클릭 간격에서 IQR 기준 이상치(1,255초 초과)를 제거한 중앙값. 길이 3 이상 시퀀스만 학습</li>
+        <li><b>필터 시점</b>: 오래된 기사를 학습 전에 빼지 않고 추천 단계에서 1일 이내 기사만 남겨 동시 클릭 신호를 보존</li>
+        <li><b>입력 기간 1일</b>: 3일이 정확도 0.26으로 조금 높지만 소요 시간이 3배라 30분 배치에 맞춰 1일 선택</li>
+        <li>gensim skip-gram 100차원, window 10. 이후 신고·삭제 콘텐츠 제외 로직을 추가해 유지보수</li></ul></div>
+    </div>
+    <div class="results">
+      <div class="res"><div class="v">0.171 → <em>0.225</em></div><div class="l">필터를 추천 단계로 옮긴 뒤 검수 정확도</div></div>
+      <div class="res"><div class="v">124초</div><div class="l">1일 입력 기준 추천풀 생성 시간, 3일(364초)의 1/3</div></div>
+      <div class="res"><div class="v">0.35~0.49%</div><div class="l">운영 하단 추천 클릭률, 12개 알고리즘 중 6위~공동 3위</div></div>
+    </div>
+    <p class="note">검수 정확도는 카테고리별 추천 10건을 직접 확인한 값입니다. 운영 클릭률은 2023년 11월 1주 평균 0.35%, 12월 초 3일 평균 0.49%이고, 하루 노출은 31만~48만 회였습니다. 출시 때는 카테고리별 검수를 거쳐 17개 카테고리에 먼저 적용했습니다.</p>  </article>
+
+  <!-- 프로젝트 3 -->
+  <article class="project print-break">
+    <div class="p-head"><h3>뉴스 카테고리 2단계 계층 분류</h3><span class="period">2023.02 – 2024.01</span><span class="chip warm">NLP</span></div>
+    <p class="p-sum">제휴 언론사 기사에 51개 카테고리 코드를 자동 부여하는 KoBERT 분류 체계를 만들고 30분 주기 배치로 운영했습니다. 언론사 제공 카테고리를 학습 라벨로 활용해 데이터를 정제하고, 대분류 1개와 도메인별 중분류 6개 모델의 추론·배포 기준·분포 모니터링을 관리했습니다. 모델은 매주 최근 60일치 기사, 대분류 기준 약 130만~160만 건으로 재학습했습니다.</p>
+    <div class="diagram">
+      <div class="cap"><span>대분류 6클래스 → 도메인별 중분류 45클래스, 모델 7개</span></div>
+      <div class="flow">
+        <div class="n"><b>입력</b><small>제목 + 본문 + OCR<br>정제 후 300자</small></div>
+        <div class="a"></div>
+        <div class="n me"><b>KoBERT 대분류</b><small>6 class<br>뉴스·생활문화·연예·스포츠·뉴미디어·금융</small></div>
+        <div class="a"></div>
+        <div class="grp"><div class="gt">도메인별 중분류 모델 6개 · CSV 핸드오프</div>
+          <div class="n me"><b>뉴스 7 · 생활문화 14 · 연예 6</b><small>대분류 결과로 라우팅, 재조회 없이 추론</small></div>
+          <div class="n me"><b>스포츠 9 · 뉴미디어 6 · 금융 3</b><small>도메인 규칙(연예 프로그램명 사전, e스포츠 키워드)은 해당 모델에만 격리</small></div>
+        </div>
+        <div class="a"></div>
+        <div class="n db"><b>콘텐츠 DB</b><small>category, score, model<br>규칙 우선 항목은 바이패스 적재</small></div>
+      </div>
+      <div class="callouts">
+        <div><span class="num">1</span><span>평면 51클래스 대신 계층 구조를 택해 저빈도 중분류(금융 3개)가 대분류 편향에 묻히지 않게 했고, 도메인 하나만 재학습·교체할 수 있습니다.</span></div>
+        <div><span class="num">2</span><span>학습 GPU, 추론 CPU(13스레드)로 분리. 30분 주기·12시간 창의 증분 볼륨이면 CPU로 충분했습니다.</span></div>
+        <div><span class="num">3</span><span>라벨 정제 레이어: 구코드 매핑 16개, 신뢰 불가 언론사×카테고리 40여 조합 학습 제외, 운영자 수정 메모로 덮어쓰기.</span></div>
+        <div><span class="num">4</span><span>적재 0건이면 Slack 알림, 카테고리별 건수를 Datadog으로 전송해 분포 급변을 감지합니다.</span></div>
+      </div>
+    </div>
+    <div class="results">
+      <div class="res"><div class="v">0.965 / 0.962</div><div class="l">대분류 주간 test accuracy / F1 5회 평균</div></div>
+      <div class="res"><div class="v">58.2% → <em>90.7%</em></div><div class="l">금융 세부 분류의 별도 검증셋 정확도. 학습 데이터를 서비스 내부 콘텐츠 중심으로 바꾼 뒤</div></div>
+      <div class="res"><div class="v">421 → 236</div><div class="l">e스포츠 오분류 건수, 키워드 규칙 적용 후 (게임 88 → 16)</div></div>
+    </div>
+    <p class="learn"><b>한계.</b> 약 60만 건으로 46개 카테고리 멀티라벨 단일 모델도 시도했으나 한 카테고리가 58%를 차지하는 불균형으로 F1 0.25에 그쳤습니다. 계층 구조를 유지하고 문제 정의를 다시 하는 쪽으로 정리했습니다.</p>
+  </article>
+
+  <!-- 프로젝트 4 -->
+  <article class="project">
+    <div class="p-head"><h3>선정성 텍스트 분류 모델 학습</h3><span class="period">2024.02 – 2024.04</span><span class="chip warm">NLP</span></div>
+    <p class="p-sum">커뮤니티 게시글 기반 뉴미디어 콘텐츠의 선정성 판별 중 텍스트 분류를 담당했습니다. KcELECTRA 이진 분류 모델을 학습·검증해 하루 3만여 건의 운영 콘텐츠에 선정성 확률 점수를 산출했습니다.</p>
+    <div class="p-grid">
+      <div class="block"><h4>문제와 제약</h4><ul>
+        <li>대상 콘텐츠가 정제된 뉴스 기사보다 <b>구어체·비속어가 많은 게시글</b>에 가까워 도메인에 맞는 텍스트 모델이 필요</li>
+        <li>선정·비선정 이진 라벨을 바탕으로 모델을 학습하고, 정확도뿐 아니라 정밀도·재현율·F1을 함께 확인</li></ul></div>
+      <div class="block"><h4>구현과 검증</h4><ul>
+        <li><b>KcELECTRA-base-v2022</b>에 2클래스 분류 헤드를 붙여 PyTorch Lightning으로 학습</li>
+        <li>최대 64토큰, 5 epoch, 학습률 5e-6 설정. 학습/검증 데이터를 8:2로 분리해 성능 기록</li>
+        <li>체크포인트를 불러와 CPU에서 추론하고, softmax의 선정 클래스 확률을 콘텐츠별 점수로 산출</li></ul></div>
+    </div>
+    <div class="results">
+      <div class="res"><div class="v"><em>0.965</em></div><div class="l">평가셋 정확도 (선정·비선정 각 100건)</div></div>
+      <div class="res"><div class="v"><em>0.98</em></div><div class="l">재현율, 선정 100건 중 98건 검출</div></div>
+      <div class="res"><div class="v">0.951</div><div class="l">정밀도, 비선정 100건 중 오탐 5건</div></div>
+    </div>
+    <p class="note">판정 임계값 0.3 기준입니다. 선정 콘텐츠를 놓치는 비용이 오탐보다 커서 재현율을 우선했습니다.</p>
+  </article>
+
+</section>
+
+<footer>
+  <span>강민규 · AI Engineer · clover4202@naver.com</span>
+  <span><a href="https://github.com/amps93">GitHub</a></span>
+</footer>
+</div>
+</body>
+</html>
